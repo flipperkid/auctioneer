@@ -1,7 +1,7 @@
 import ActionTypes from './ActionTypes';
 import store from './store';
 
-const firebase = new Firebase('https://celerity.firebaseio.com/');
+const firebase = new Firebase('https://auctioneer.firebaseio.com/');
 firebase.unauth();
 
 export const authenticate = function() {
