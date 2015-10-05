@@ -27,10 +27,7 @@ class Admin extends Component {
       return (
         <Item key={key}
           itemId={key}
-          title={item.title}
-          description={item.description}
-          startingBid={item.starting_bid ? item.starting_bid : 0}
-          isPublished={item.is_published}
+          item={item}
           isOpen={index++ === indexToOpen || this.state.openItem === key} />)
     });
 
