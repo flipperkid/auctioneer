@@ -70,10 +70,11 @@ class Item extends Component {
                 onBlur={this.persist.bind(this)} />
             </div>
             <div className='right-column'>
-              <Toggle label='published?'
+              <Toggle label='published?' ref='publishedToggle'
                 labelPosition='right'
-                value={this.props.isPublished}
-                className='position-published'/>
+                defaultToggled={this.props.isPublished}
+                className='position-published'
+                onToggle={this.persist.bind(this)} />
             </div>
           </CardActions>
           <hr className='card-divider'/>
@@ -146,6 +147,7 @@ class Item extends Component {
     firebase.child('items/'+this.props.itemId).update({
       title: this.refs.titleInput.getValue(),
       description: this.refs.descriptionInput.getValue(),
+      is_published: this.refs.publishedToggle.isToggled(),
       starting_bid: bidFloat
     }, () => {
       this.setState({
