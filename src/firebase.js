@@ -1,29 +1,33 @@
 import ActionTypes from './ActionTypes';
 import store from './store';
 
-const firebase = new Firebase('https://auctioneer.firebaseio.com/');
+window.firebase = new Firebase('https://auctioneer.firebaseio.com/');
 firebase.unauth();
 
-export const authenticate = function() {
+export const authenticate = function(username, password) {
   var state = store.getState();
   firebase.authWithPassword({
-    email: state.name,
-    password: state.text
+    email: username + '@gmail.com',
+    password: password
   }, function(error, authData) {
     if (error) {
-      console.log("Login Failed!", error);
+      store.dispatch({
+        type: ActionTypes.LOGIN_ERROR
+      })
     } else {
-      console.log("Authenticated successfully with payload:", authData);
       initListeners();
+      store.dispatch({
+        type: ActionTypes.LOGGED_IN
+      });
     }
   });
 };
 
 const initListeners = function() {
-  firebase.on('child_added', function(snapshot) {
+  firebase.on('value', function(snapshot) {
     store.dispatch({
-      type: ActionTypes.RECEIVE_MESSAGE,
-      message: snapshot.val()
+      type: ActionTypes.FIREBASE_UPDATE,
+      firebase_atom: snapshot.val()
     });
   });
 };

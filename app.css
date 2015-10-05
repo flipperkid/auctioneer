@@ -6,3 +6,31 @@ body {
   font-size: 13px;
   line-height: 20px;
 }
+
+.left-column {
+  float: left;
+}
+
+.right-column {
+  float: right;
+}
+
+.position-published {
+  top: 20px;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.dollar::before {
+  content: '$ ';
+}
+
+.spacer {
+  margin-left: 8px
+}
+
+.card-divider {
+  opacity: 0.3
+}
