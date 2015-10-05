@@ -3,6 +3,7 @@ import Dialog from 'material-ui/lib/dialog';
 import RaisedButton from 'material-ui/lib/raised-button';
 import RefreshIndicator from 'material-ui/lib/refresh-indicator';
 import TextField from 'material-ui/lib/text-field';
+
 import { authenticate } from './firebase';
 import store from './store';
 

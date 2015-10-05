@@ -34,3 +34,7 @@ body {
 .card-divider {
   opacity: 0.3
 }
+
+.edit-title {
+  padding: 0 !important;
+}

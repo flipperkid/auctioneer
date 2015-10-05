@@ -45,9 +45,14 @@ class Admin extends Component {
   componentDidMount() {
     store.subscribe(() => {
       let state = store.getState();
-      let firebaseAtom = state.firebase_atom
+      let firebaseAtom = state.firebase_atom;
+      let tempItem = state.temp_items;
+      let items = {};
+      Object.keys(firebaseAtom.items).forEach((key) => {
+        items[key] = $.extend(true, firebaseAtom.items[key], tempItem[key]);
+      });
       this.setState({
-        items: firebaseAtom.items,
+        items: items,
         openItem: state.open_item
       });
     });

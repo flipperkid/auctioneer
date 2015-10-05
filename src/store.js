@@ -9,16 +9,17 @@ const initialState = {
   open_item: null,
   firebase_atom: {
     items: {}
-  }
+  },
+  temp_items: {}
 };
-const reducer = function(state = initialState, action) {
-  var newState = $.extend(true, {}, state);
+const reducer = (state = initialState, action) => {
+  let newState = $.extend(true, {}, state);
   switch (action.type) {
     case ActionTypes.FIREBASE_UPDATE:
       newState.firebase_atom = action.firebase_atom;
       if (newState.open_new) {
         newState.open_new = false;
-        Object.keys(newState.firebase_atom.items).forEach(function(key) {
+        Object.keys(newState.firebase_atom.items).forEach((key) => {
           if (state.firebase_atom.items[key] === undefined) {
             newState.open_item = key;
           }
@@ -33,6 +34,11 @@ const reducer = function(state = initialState, action) {
       return newState;
     case ActionTypes.OPEN_NEW:
       newState.open_new = true;
+      return newState;
+    case ActionTypes.UPDATE_ITEM:
+      let item = newState.temp_items[action.id];
+      let newItem = $.extend(true, item, action.item);
+      newState.temp_items[action.id] = newItem;
       return newState;
     default:
       return state;

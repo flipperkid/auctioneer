@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import CardActions from 'material-ui/lib/card/card-actions';
-import Dialog from 'material-ui/lib/dialog';
+import CardTitle from 'material-ui/lib/card/card-title';
 import RaisedButton from 'material-ui/lib/raised-button';
 import TextField from 'material-ui/lib/text-field';
 import Toggle from 'material-ui/lib/toggle';
 
+import ActionTypes from './ActionTypes';
+import DeleteConfirmation from './DeleteConfirmation.jsx';
 import firebase from './firebase';
+import store from './store';
 
 class ItemAdmin extends Component {
   constructor() {
@@ -14,21 +17,19 @@ class ItemAdmin extends Component {
   }
 
   render() {
-    let standardActions = [
-      { text: 'Cancel', onClick: this.closeDialog.bind(this) },
-      { text: 'Confirm', onClick: this.delete.bind(this) }
-    ];
     return (
       <div>
-        <Dialog title='Confirm Delete?' ref='deleteDialog'
-            actions={standardActions}
-            modal={false} >
-          Are you sure you want to delete this item?
-        </Dialog>
-        <CardActions expandable={true} className='overflow-hidden'>
+        <DeleteConfirmation ref='deleteConfirmation'
+          itemId={this.props.itemId} />
+
+        <hr className='card-divider'/>
+        <CardActions
+          expandable={true}
+          className='overflow-hidden'>
+          <CardTitle subtitle='Edit' className='edit-title' />
           <div className='left-column'>
             <TextField hintText='Title' ref='titleInput'
-              value={this.getTitle()}
+              defaultValue={this.props.item.title}
               onChange={this.updateTitle.bind(this)}
               onBlur={this.persist.bind(this)} />
           </div>
@@ -42,13 +43,14 @@ class ItemAdmin extends Component {
             defaultValue={this.props.item.description}
             multiLine={true}
             fullWidth={true}
+            onChange={this.updateDescription.bind(this)}
             onBlur={this.persist.bind(this)} />
           <div className='left-column dollar'>
             <TextField hintText='Starting Bid' ref='startingBidInput'
-              defaultValue={this.getStartingBid()}
+              defaultValue={this.props.item.starting_bid}
               type='number'
               step='1'
-              disabled={this.hasCurrentBid()}
+              disabled={this.props.hasCurrentBid}
               errorText={this.state.startingBidError}
               onChange={this.updateStartingBid.bind(this)}
               onBlur={this.persist.bind(this)} />
@@ -61,37 +63,52 @@ class ItemAdmin extends Component {
               onToggle={this.persist.bind(this)} />
           </div>
         </CardActions>
-        <hr className='card-divider'/>
       </div>
     );
   }
 
-  getTitle() {
-    return this.state.title ? this.state.title : this.props.item.title;
-  }
-
+  /**
+   * @private
+   */
   updateTitle() {
-    this.setState({
-      title: this.refs.titleInput.getValue()
+    store.dispatch({
+      type: ActionTypes.UPDATE_ITEM,
+      id: this.props.itemId,
+      item: {
+        title: this.refs.titleInput.getValue()
+      }
     });
   }
 
-  getStartingBid() {
-    return this.state.startingBid ?
-      this.state.startingBid : this.props.item.starting_bid;
-  }
-
+  /**
+   * @private
+   */
   updateStartingBid() {
-    this.setState({
-      startingBid: this.refs.startingBidInput.getValue()
+    store.dispatch({
+      type: ActionTypes.UPDATE_ITEM,
+      id: this.props.itemId,
+      item: {
+        starting_bid: this.refs.startingBidInput.getValue()
+      }
     });
   }
 
-  hasCurrentBid() {
-    return this.props.item.current_bid !== null &&
-      this.props.item.current_bid !== undefined;
+  /**
+   * @private
+   */
+  updateDescription() {
+    store.dispatch({
+      type: ActionTypes.UPDATE_ITEM,
+      id: this.props.itemId,
+      item: {
+        description: this.refs.descriptionInput.getValue()
+      }
+    });
   }
 
+  /**
+   * @private
+   */
   persist() {
     var startingBid = this.refs.startingBidInput.getValue();
     var bidFloat = parseFloat(startingBid);
@@ -116,23 +133,16 @@ class ItemAdmin extends Component {
       starting_bid: bidFloat
     }, () => {
       this.setState({
-        title: undefined,
-        startingBid: undefined,
         startingBidError: undefined
       });
     });
   }
 
+  /**
+   * @private
+   */
   confirmDelete() {
-    this.refs.deleteDialog.show();
-  }
-
-  closeDialog() {
-    this.refs.deleteDialog.dismiss();
-  }
-
-  delete() {
-    firebase.child('items/'+this.props.itemId).remove();
+    this.refs.deleteConfirmation.show();
   }
 }
 
