@@ -32,9 +32,25 @@ body {
 }
 
 .card-divider {
-  opacity: 0.3
+  opacity: 0.4
 }
 
 .edit-title {
   padding: 0 !important;
+}
+
+.facebook-icon {
+  background-image: url('FB-f-Logo__blue_512.png');
+  height: 100%;
+  vertical-align: middle;
+  float: left;
+  padding-left: 12px;
+  line-height: 36px;
+  width: 36px;
+  background-size: 36px;
+  color: rgba(255, 255, 255, 1);
+}
+
+.facebook-login {
+  background-color: rgba(59, 89, 152, 1) !important;
 }

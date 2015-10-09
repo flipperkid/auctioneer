@@ -13,62 +13,71 @@ import ItemAdmin from './ItemAdmin.jsx';
 class Item extends Component {
   constructor() {
     super();
+    this.state = {};
   }
 
   render() {
-    let descriptionLines = this.props.item.description.split('\n');
-    let descriptionDom = descriptionLines.map((line) => {
-      return (<div>{line}</div>);
-    });
+    let descriptionDom = undefined;
+    if (this.props.item.description) {
+      let descriptionLines = this.props.item.description.split('\n');
+      descriptionDom = descriptionLines.map((line) => {
+        return (<div>{line}</div>);
+      });
+    }
     let currentBidDom = undefined;
     if (this.hasCurrentBid()) {
+      let currentBid = this.getCurrentBid();
       currentBidDom = (
         <div>
-          {'Current Bid: $' + this.getCurrentBid(0)}
+          {'Current Bid: $' + currentBid.value + ' by ' + currentBid.username}
         </div>
       );
     }
 
+    let itemAdmin = null;
+    if (this.props.adminMode) {
+      itemAdmin = (<ItemAdmin itemId={this.props.itemId}
+        item={this.props.item}
+        bids={this.props.bids || {}}
+        hasCurrentBid={this.hasCurrentBid()} />)
+    }
+
     return (
-      <div>
+      <div style={{
+        marginLeft: '5px',
+        marginRight: '5px'
+      }}>
         <ImagePicker ref='imagePicker'
           itemId={this.props.itemId} />
 
         <br />
-        <Card initiallyExpanded={this.props.isOpen} >
-          <CardTitle
-            title={this.props.item.title}
-            showExpandableButton={true} />
+        <Card>
+          <CardTitle title={this.props.item.title} />
           <CardMedia
               overlay={<CardTitle title={this.props.item.title} />}
-              expandable={true}
               onClick={this.setImageSource.bind(this)} >
             <img src={this.getImageSource()} />
           </CardMedia>
           <CardText
-            expandable={true}
             className='overflow-hidden' >
             {descriptionDom}
             {currentBidDom}
             <br />
             <div className='left-column dollar'>
-              <TextField floatingLabelText='Bid'
-                value={this.getCurrentBid(1)}
+              <TextField floatingLabelText='Bid' ref='bidInput'
+                value={this.getCurrentBidValue(1)}
+                errorText={this.state.bidError}
                 type='number'
                 step='1'
-                disabled={true} />
+                disabled={this.props.adminMode} />
               <span className='spacer'/>
               <RaisedButton label='Bid'
                 secondary={true}
-                disabled={true} />
+                disabled={this.props.adminMode}
+                onClick={this.submitBid.bind(this)} />
             </div>
           </CardText>
-
-          <ItemAdmin
-            expandable={true}
-            itemId={this.props.itemId}
-            item={this.props.item}
-            hasCurrentBid={this.hasCurrentBid()} />
+          {itemAdmin}
         </Card>
       </div>
     );
@@ -77,17 +86,71 @@ class Item extends Component {
   /**
    * @private
    */
-  getCurrentBid(increment) {
-    return this.hasCurrentBid() ?
-      this.props.item.current_bid + increment : this.props.item.starting_bid;
+   submitBid() {
+     let bidValue = this.refs.bidInput.getValue();
+     let bidFloat = parseFloat(bidValue);
+     let isBidValid = /^\d*(?:\.\d)?\d?$/.test(bidValue);
+     if (!isBidValid) {
+       this.setState({
+         bidError: 'Bid must have at most 2 decimal places.'
+       });
+       return;
+     }
+
+     let currentBidPlusOne = this.getCurrentBidValue(1);
+     if(bidFloat < currentBidPlusOne) {
+       this.setState({
+         bidError: 'Bid must be greater than or equal to ' + currentBidPlusOne + '.'
+       });
+       return;
+     }
+
+     firebase.child('bids/'+this.props.itemId).push({
+       itemId: this.props.itemId,
+       username: this.props.username,
+       email: this.props.email,
+       value: bidFloat
+     }, () => {
+       this.setState({
+         bidError: undefined
+       });
+     });
+   }
+
+   /**
+    * @private
+    */
+   getCurrentBidValue(increment) {
+     let currentBid = this.getCurrentBid();
+     return currentBid.value + increment;
+   }
+
+   /**
+   * @private
+   */
+  getCurrentBid() {
+    if (!this.hasCurrentBid()) {
+      return this.props.item.starting_bid;
+    }
+
+    let bids = this.props.bids;
+    let bidKeys = Object.keys(bids);
+    let maxBid = bids[bidKeys[0]];
+    for (let idx = 1; idx < bidKeys.length; idx++) {
+      let currBid = bids[bidKeys[idx]];
+      if (currBid.value > maxBid.value) {
+        maxBid = currBid;
+      }
+    }
+    return maxBid;
   }
 
   /**
    * @private
    */
   hasCurrentBid() {
-    return this.props.item.current_bid !== null &&
-      this.props.item.current_bid !== undefined;
+    let bids = this.props.bids;
+    return bids !== null && bids !== undefined && Object.keys(bids).length > 0;
   }
 
   /**

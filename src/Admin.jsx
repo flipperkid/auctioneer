@@ -3,7 +3,7 @@ import AppBar from 'material-ui/lib/app-bar';
 import FlatButton from 'material-ui/lib/flat-button';
 
 import ActionTypes from './ActionTypes';
-import Item from './Item.jsx';
+import ItemColumn from './ItemColumn.jsx';
 import firebase from './firebase';
 import store from './store';
 
@@ -12,32 +12,59 @@ class Admin extends Component {
     super();
     this.state = {
       items: {},
-      openItem: null
+      bids: {},
+      adminMode: false,
+      email: '',
+      username: 'Guest'
     };
   }
 
   render() {
-    var indexToOpen = -1;
-    if (this.state.openItem === null) {
-      indexToOpen = 0;
+    let windowWidth = $(window).width();
+    let columnCount = 2;
+    if (windowWidth < 850) {
+      columnCount = 1;
     }
-    var index = 0;
-    var items = Object.keys(this.state.items).map((key) => {
+
+    let itemSplit = [];
+    let itemColumns = [];
+    for (var columnIdx = 0; columnIdx < columnCount; columnIdx++) {
+      var items = {};
+      itemSplit.push(items);
+      itemColumns.push(<ItemColumn items={items}
+        bids={this.state.bids}
+        adminMode={this.state.adminMode}
+        username={this.state.username}
+        email={this.state.email}
+        columnCount={columnCount} />);
+    }
+
+    let itemsAdded = 0;
+    Object.keys(this.state.items).forEach((key) => {
       var item = this.state.items[key];
-      return (
-        <Item key={key}
-          itemId={key}
-          item={item}
-          isOpen={index++ === indexToOpen || this.state.openItem === key} />)
+      if (!item.is_published && !this.state.adminMode) {
+        return;
+      }
+
+      var columnIdx = itemsAdded++ % columnCount;
+      itemSplit[columnIdx][key] = item;
     });
 
+    let rightElement = (<FlatButton label='Logout' onClick={this.logout} />);
+    let title = 'Auctioneer';
+    if (this.state.adminMode) {
+      title += ' (Admin)'
+      rightElement = (<FlatButton label='New Item' onClick={this.addNewItem} />);
+    }
     return (
       <div>
         <AppBar
-          title='Admin Tool'
-          showMenuIconButton={false}
-          iconElementRight={<FlatButton label='New Item' onClick={this.addNewItem} />} />
-        {items}
+          title={title}
+          onLeftIconButtonTouchTap={this.toggleAdmin}
+          iconElementRight={rightElement} />
+        <div className='row' >
+          {itemColumns}
+        </div>
       </div>
     );
   }
@@ -46,6 +73,7 @@ class Admin extends Component {
     store.subscribe(() => {
       let state = store.getState();
       let firebaseAtom = state.firebase_atom;
+      let bids = firebaseAtom.bids;
       let tempItem = state.temp_items;
       let items = {};
       Object.keys(firebaseAtom.items).forEach((key) => {
@@ -53,7 +81,10 @@ class Admin extends Component {
       });
       this.setState({
         items: items,
-        openItem: state.open_item
+        bids: bids,
+        adminMode: state.admin_mode,
+        username: state.username,
+        email: state.email
       });
     });
   }
@@ -62,11 +93,24 @@ class Admin extends Component {
    * @private
    */
   addNewItem() {
-    store.dispatch({
-      type: ActionTypes.OPEN_NEW
-    });
     firebase.child('items').push({
       starting_bid: 5,
+    });
+  }
+
+  /**
+   * @private
+   */
+  logout() {
+    firebase.unauth();
+  }
+
+  /**
+   * @private
+   */
+  toggleAdmin() {
+    store.dispatch({
+      type: ActionTypes.TOGGLE_ADMIN
     });
   }
 }

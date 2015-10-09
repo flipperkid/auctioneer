@@ -4,37 +4,33 @@ import ActionTypes from './ActionTypes';
 
 const initialState = {
   logged_in: false,
-  login_error: false,
-  open_new: false,
-  open_item: null,
+  username: 'Guest',
+  email: '',
+  admin_mode: false,
   firebase_atom: {
-    items: {}
+    items: {},
+    bids: {}
   },
   temp_items: {}
 };
 const reducer = (state = initialState, action) => {
   let newState = $.extend(true, {}, state);
   switch (action.type) {
-    case ActionTypes.FIREBASE_UPDATE:
-      newState.firebase_atom = action.firebase_atom;
-      if (newState.open_new) {
-        newState.open_new = false;
-        Object.keys(newState.firebase_atom.items).forEach((key) => {
-          if (state.firebase_atom.items[key] === undefined) {
-            newState.open_item = key;
-          }
-        });
-      }
-      return newState;
     case ActionTypes.LOGGED_IN:
       newState.logged_in = true;
+      newState.username = action.username;
+      newState.email = action.email;
       return newState;
-    case ActionTypes.LOGIN_ERROR:
-      newState.login_error = true;
+    case ActionTypes.LOGGED_OUT:
+      return $.extend(true, {}, initialState);
+    case ActionTypes.TOGGLE_ADMIN:
+      newState.admin_mode = !newState.admin_mode;
       return newState;
-    case ActionTypes.OPEN_NEW:
-      newState.open_new = true;
-      return newState;
+      case ActionTypes.FIREBASE_UPDATE:
+        newState.firebase_atom = action.firebase_atom;
+        newState.firebase_atom.items = newState.firebase_atom.items || {};
+        newState.firebase_atom.bids = newState.firebase_atom.bids || {};
+        return newState;
     case ActionTypes.UPDATE_ITEM:
       let item = newState.temp_items[action.id];
       let newItem = $.extend(true, item, action.item);
