@@ -36,8 +36,8 @@ class ItemAdmin extends Component {
       return 0;
     });
 
-    let bidsDom = bids.map((bid) => {
-      return (<TableRow selectable={false} >
+    let bidsDom = bids.map((bid, idx) => {
+      return (<TableRow key={idx} selectable={false} >
         <TableRowColumn>{bid.username}</TableRowColumn>
         <TableRowColumn>{bid.value}</TableRowColumn>
         <TableRowColumn>{bid.email}</TableRowColumn>

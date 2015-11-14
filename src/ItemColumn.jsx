@@ -19,6 +19,7 @@ class ItemColumn extends Component {
           username={this.props.username}
           email={this.props.email}
           uid={this.props.uid}
+          closeDate={this.props.closeDate}
           item={item} />);
     });
 

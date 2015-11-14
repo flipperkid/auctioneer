@@ -11,7 +11,8 @@ const initialState = {
   is_admin: false,
   firebase_atom: {
     items: {},
-    bids: {}
+    bids: {},
+    close_date: null
   },
   temp_items: {}
 };
@@ -33,6 +34,7 @@ const reducer = (state = initialState, action) => {
         newState.firebase_atom = action.firebase_atom;
         newState.firebase_atom.items = newState.firebase_atom.items || {};
         newState.firebase_atom.bids = newState.firebase_atom.bids || {};
+        newState.firebase_atom.close_date = newState.firebase_atom.close_date || null;
         return newState;
     case ActionTypes.UPDATE_ITEM:
       let item = newState.temp_items[action.id];

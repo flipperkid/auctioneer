@@ -54,3 +54,7 @@ body {
 .facebook-login {
   background-color: rgba(59, 89, 152, 1) !important;
 }
+
+.hidden {
+  display: none;
+}

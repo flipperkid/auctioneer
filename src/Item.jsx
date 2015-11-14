@@ -20,8 +20,8 @@ class Item extends Component {
     let descriptionDom = undefined;
     if (this.props.item.description) {
       let descriptionLines = this.props.item.description.split('\n');
-      descriptionDom = descriptionLines.map((line) => {
-        return (<div>{line}</div>);
+      descriptionDom = descriptionLines.map((line, idx) => {
+        return (<div key={idx}>{line}</div>);
       });
     }
     let currentBidDom = undefined;
@@ -40,6 +40,11 @@ class Item extends Component {
         item={this.props.item}
         bids={this.props.bids || {}}
         hasCurrentBid={this.hasCurrentBid()} />)
+    }
+
+    let bidClasses = 'left-column dollar';
+    if (this.props.closeDate !== null && new Date().getTime() > this.props.closeDate) {
+      bidClasses += ' hidden';
     }
 
     return (
@@ -63,7 +68,7 @@ class Item extends Component {
             {descriptionDom}
             {currentBidDom}
             <br />
-            <div className='left-column dollar'>
+            <div className={bidClasses}>
               <TextField floatingLabelText='Bid' ref='bidInput'
                 defaultValue={this.getCurrentBidValue(1)}
                 errorText={this.state.bidError}
