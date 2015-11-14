@@ -30,7 +30,11 @@ class ItemAdmin extends Component {
    * @private
    */
   delete() {
-    firebase.child('items/'+this.props.itemId).remove();
+    firebase.child('app_data/items/'+this.props.itemId).remove(function(result) {
+      if (result instanceof Error) {
+        throw result;
+      }
+    });
   }
 }
 

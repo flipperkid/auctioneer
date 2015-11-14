@@ -33,8 +33,12 @@ class ImagePicker extends Component {
    * @private
    */
   pick() {
-    firebase.child('items/'+this.props.itemId).update({
+    firebase.child('app_data/items/'+this.props.itemId).update({
       image_source: this.refs.imageLocation.getValue()
+    }, function(result) {
+      if (result instanceof Error) {
+        throw result;
+      }
     });
     this.refs.imageDialog.dismiss();
   }

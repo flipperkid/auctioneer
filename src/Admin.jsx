@@ -60,6 +60,7 @@ class Admin extends Component {
       <div>
         <AppBar
           title={title}
+          showMenuIconButton={this.state.isAdmin || false}
           onLeftIconButtonTouchTap={this.toggleAdmin}
           iconElementRight={rightElement} />
         <div className='row' >
@@ -84,7 +85,8 @@ class Admin extends Component {
         bids: bids,
         adminMode: state.admin_mode,
         username: state.username,
-        email: state.email
+        email: state.email,
+        isAdmin: state.is_admin
       });
     });
   }
@@ -93,8 +95,12 @@ class Admin extends Component {
    * @private
    */
   addNewItem() {
-    firebase.child('items').push({
+    firebase.child('app_data/items').push({
       starting_bid: 5,
+    }, function(result) {
+      if (result instanceof Error) {
+        throw result;
+      }
     });
   }
 

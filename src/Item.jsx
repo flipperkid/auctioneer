@@ -65,7 +65,7 @@ class Item extends Component {
             <br />
             <div className='left-column dollar'>
               <TextField floatingLabelText='Bid' ref='bidInput'
-                value={this.getCurrentBidValue(1)}
+                defaultValue={this.getCurrentBidValue(1)}
                 errorText={this.state.bidError}
                 type='number'
                 step='1'
@@ -105,12 +105,16 @@ class Item extends Component {
        return;
      }
 
-     firebase.child('bids/'+this.props.itemId).push({
+     firebase.child('app_data/bids/'+this.props.itemId).push({
        itemId: this.props.itemId,
        username: this.props.username,
        email: this.props.email,
        value: bidFloat
-     }, () => {
+     }, (result) => {
+       if (result instanceof Error) {
+         throw result;
+       }
+
        this.setState({
          bidError: undefined
        });

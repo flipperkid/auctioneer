@@ -7,6 +7,7 @@ const initialState = {
   username: 'Guest',
   email: '',
   admin_mode: false,
+  is_admin: false,
   firebase_atom: {
     items: {},
     bids: {}
@@ -35,6 +36,9 @@ const reducer = (state = initialState, action) => {
       let item = newState.temp_items[action.id];
       let newItem = $.extend(true, item, action.item);
       newState.temp_items[action.id] = newItem;
+      return newState;
+    case ActionTypes.ENABLE_ADMIN:
+      newState.is_admin = true;
       return newState;
     default:
       return state;

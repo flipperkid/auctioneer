@@ -163,12 +163,16 @@ class ItemAdmin extends Component {
       return;
     }
 
-    firebase.child('items/'+this.props.itemId).update({
+    firebase.child('app_data/items/'+this.props.itemId).update({
       title: this.refs.titleInput.getValue(),
       description: this.refs.descriptionInput.getValue(),
       is_published: this.refs.publishedToggle.isToggled(),
       starting_bid: bidFloat
-    }, () => {
+    }, (result) => {
+      if (result instanceof Error) {
+        throw result;
+      }
+
       this.setState({
         startingBidError: undefined
       });

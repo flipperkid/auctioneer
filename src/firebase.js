@@ -1,9 +1,14 @@
 import ActionTypes from './ActionTypes';
 import store from './store';
 
-window.firebase = new Firebase('https://auctioneer.firebaseio.com/');
+window.firebase = new Firebase('https://auctioneer.firebaseio.com');
 const initListeners = () => {
-  firebase.on('value', function(snapshot) {
+  firebase.child('admins').on('value', function(snapshot) {
+    store.dispatch({
+      type: ActionTypes.ENABLE_ADMIN
+    });
+  });
+  firebase.child('app_data').on('value', function(snapshot) {
     store.dispatch({
       type: ActionTypes.FIREBASE_UPDATE,
       firebase_atom: snapshot.val()

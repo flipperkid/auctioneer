@@ -41,6 +41,9 @@ class Login extends Component {
       }
       this.refs.loginDialog.show();
     });
+    if (!store.getState().logged_in) {
+      this.refs.loginDialog.show();  
+    }
   }
 
   /**
