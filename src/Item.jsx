@@ -109,7 +109,8 @@ class Item extends Component {
        itemId: this.props.itemId,
        username: this.props.username,
        email: this.props.email,
-       value: bidFloat
+       value: bidFloat,
+       uid: this.props.uid
      }, (result) => {
        if (result instanceof Error) {
          throw result;

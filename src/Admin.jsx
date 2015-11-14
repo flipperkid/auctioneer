@@ -36,6 +36,7 @@ class Admin extends Component {
         adminMode={this.state.adminMode}
         username={this.state.username}
         email={this.state.email}
+        uid={this.state.uid}
         columnCount={columnCount} />);
     }
 
@@ -86,7 +87,8 @@ class Admin extends Component {
         adminMode: state.admin_mode,
         username: state.username,
         email: state.email,
-        isAdmin: state.is_admin
+        isAdmin: state.is_admin,
+        uid: state.uid
       });
     });
   }

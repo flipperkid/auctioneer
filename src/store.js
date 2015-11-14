@@ -6,6 +6,7 @@ const initialState = {
   logged_in: false,
   username: 'Guest',
   email: '',
+  uid: '',
   admin_mode: false,
   is_admin: false,
   firebase_atom: {
@@ -21,6 +22,7 @@ const reducer = (state = initialState, action) => {
       newState.logged_in = true;
       newState.username = action.username;
       newState.email = action.email;
+      newState.uid = action.uid;
       return newState;
     case ActionTypes.LOGGED_OUT:
       return $.extend(true, {}, initialState);

@@ -22,7 +22,8 @@ firebase.onAuth((authData) => {
     store.dispatch({
       type: ActionTypes.LOGGED_IN,
       email: authData.facebook.email,
-      username: authData.facebook.displayName
+      username: authData.facebook.displayName,
+      uid: authData.uid
     });
   } else {
     store.dispatch({

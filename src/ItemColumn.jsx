@@ -18,6 +18,7 @@ class ItemColumn extends Component {
           adminMode={this.props.adminMode}
           username={this.props.username}
           email={this.props.email}
+          uid={this.props.uid}
           item={item} />);
     });
 
