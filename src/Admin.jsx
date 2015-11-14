@@ -43,7 +43,7 @@ class Admin extends Component {
     let itemsAdded = 0;
     Object.keys(this.state.items).forEach((key) => {
       var item = this.state.items[key];
-      if (!item.is_published && !this.state.adminMode) {
+      if (item.archived || (!item.is_published && !this.state.adminMode)) {
         return;
       }
 

@@ -55,7 +55,7 @@ class ItemAdmin extends Component {
           <div className='left-column'>
             <TextField hintText='Title' ref='titleInput'
               defaultValue={this.props.item.title}
-              onChange={this.updateTitle.bind(this)}
+              // onChange={this.updateTitle.bind(this)}
               onBlur={this.persist.bind(this)} />
           </div>
           <div className='right-column'>
@@ -68,7 +68,7 @@ class ItemAdmin extends Component {
             defaultValue={this.props.item.description}
             multiLine={true}
             fullWidth={true}
-            onChange={this.updateDescription.bind(this)}
+            // onChange={this.updateDescription.bind(this)}
             onBlur={this.persist.bind(this)} />
           <div className='left-column dollar'>
             <TextField hintText='Starting Bid' ref='startingBidInput'
@@ -77,7 +77,7 @@ class ItemAdmin extends Component {
               step='1'
               disabled={this.props.hasCurrentBid}
               errorText={this.state.startingBidError}
-              onChange={this.updateStartingBid.bind(this)}
+              // onChange={this.updateStartingBid.bind(this)}
               onBlur={this.persist.bind(this)} />
           </div>
           <div className='right-column'>
@@ -167,7 +167,8 @@ class ItemAdmin extends Component {
       title: this.refs.titleInput.getValue(),
       description: this.refs.descriptionInput.getValue(),
       is_published: this.refs.publishedToggle.isToggled(),
-      starting_bid: bidFloat
+      starting_bid: bidFloat,
+      archived: false
     }, (result) => {
       if (result instanceof Error) {
         throw result;
