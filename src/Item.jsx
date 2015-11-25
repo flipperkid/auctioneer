@@ -131,7 +131,11 @@ class Item extends Component {
     * @private
     */
    getCurrentBidValue(increment) {
-     let currentBid = this.getCurrentBid();
+     if (!this.hasCurrentBid()) {
+       return this.props.item.starting_bid;
+     }
+
+     let currentBid = this.getCurrentBid();     
      return currentBid.value + increment;
    }
 
@@ -139,10 +143,6 @@ class Item extends Component {
    * @private
    */
   getCurrentBid() {
-    if (!this.hasCurrentBid()) {
-      return this.props.item.starting_bid;
-    }
-
     let bids = this.props.bids;
     let bidKeys = Object.keys(bids);
     let maxBid = bids[bidKeys[0]];

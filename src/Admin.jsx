@@ -6,6 +6,7 @@ import FlatButton from 'material-ui/lib/flat-button';
 import IconButton from 'material-ui/lib/icon-button';
 import IconMenu from 'material-ui/lib/menus/icon-menu';
 import MenuItem from 'material-ui/lib/menus/menu-item';
+import Paper from 'material-ui/lib/paper';
 import TimePicker from 'material-ui/lib/time-picker/time-picker';
 import ActionTypes from './ActionTypes';
 import ItemColumn from './ItemColumn.jsx';
@@ -61,16 +62,16 @@ class Admin extends Component {
 
     let rightElement = (<FlatButton label='Logout' onClick={this.logout} />);
     let title = 'Auction';
-    if (this.state.closeDate) {
-      var date = new Date(this.state.closeDate);
-      let timeParts = date.toLocaleTimeString().split(' ');
-      let ampm = '';
-      if (timeParts.length > 1 && (timeParts[1] === 'AM' || timeParts[1] === 'PM')) {
-        ampm = ' ' + timeParts[1];
-      }
-      title += ' open until ' + date.toDateString() + ' ' +
-        date.getHours() + ':' + date.getMinutes() + ampm;
-    }
+//     if (this.state.closeDate) {
+//       var date = new Date(this.state.closeDate);
+//       let timeParts = date.toLocaleTimeString().split(' ');
+//       let ampm = '';
+//       if (timeParts.length > 1 && (timeParts[1] === 'AM' || timeParts[1] === 'PM')) {
+//         ampm = ' ' + timeParts[1];
+//       }
+//       title += ' open until ' + date.toDateString() + ' ' + '9 PM EST'
+// //        date.getHours() + ':' + date.getMinutes() + ampm;
+//     }
 
     let pickerClass = 'hidden';
     if (this.state.adminMode) {
@@ -95,6 +96,26 @@ class Admin extends Component {
           showMenuIconButton={this.state.isAdmin || false}
           onLeftIconButtonTouchTap={this.toggleAdmin}
           iconElementRight={rightElement} />
+        <Paper zDepth={2} style={{
+            overflow: 'auto',
+            margin: '5px'
+          }}>
+          <img style={{
+              float: 'left'
+            }}
+            src='https://static.wixstatic.com/media/57b1d4_00663a2d8e76460db6bfd254b4fcd1e0.png/v1/fill/w_237,h_69,al_c,usm_0.50_1.20_0.00/57b1d4_00663a2d8e76460db6bfd254b4fcd1e0.png' />
+          <span style={{
+            fontSize: '20px'
+          }}>
+            <p style={{
+                paddingTop: '10px'
+              }}>
+              The Secret Garden auction ends December 17 at 9 PM EST.
+            </p><p>
+              All items will ship in time for Christmas.
+            </p>
+          </span>
+        </Paper>
         <div className='row' >
           {itemColumns}
         </div>
